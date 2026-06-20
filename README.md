@@ -4,6 +4,10 @@ A Python desktop application for multimodal route finding in Saint Petersburg us
 
 The app was built as an academic/personal project to explore how graph search algorithms behave on real urban transport data.
 
+## Screenshot
+
+![Saint Petersburg Rail Path Finder demo](assets/demo.png)
+
 ## Features
 
 - Interactive map GUI built with Tkinter, CustomTkinter, and tkintermapview.
@@ -52,17 +56,18 @@ The project compares multiple graph search strategies on the same routing proble
 ## Project Structure
 
 ```text
-.
-├── app.py                  # Main GUI application
-├── config.py               # App constants and map settings
-├── database.py             # SQLite persistence
-├── pathfinder.py           # Search algorithm implementations
-├── route_logic.py          # Multimodal route selection
-├── spatial_index.py        # Lightweight spatial lookup helper
-├── test_all_cases.py       # Regression/smoke tests
-├── build_exe.ps1           # Windows packaging script
-├── requirements.txt
-└── README.md
+|-- app.py                  # Main GUI application
+|-- config.py               # App constants and map settings
+|-- database.py             # SQLite persistence
+|-- pathfinder.py           # Search algorithm implementations
+|-- route_logic.py          # Multimodal route selection
+|-- spatial_index.py        # Lightweight spatial lookup helper
+|-- test_all_cases.py       # Regression/smoke tests
+|-- build_exe.ps1           # Windows packaging script
+|-- requirements.txt
+|-- assets/
+|   `-- demo.png            # README screenshot
+`-- README.md
 ```
 
 ## How to Run
@@ -127,4 +132,4 @@ These files can be regenerated locally by running or packaging the application.
 - Add GTFS timetable data for more realistic train waiting times.
 - Show multiple alternative routes.
 - Add route preferences such as fastest route, least walking, or fewest transfers.
-- Add screenshots and demo GIFs to the repository.
+- Add a short demo GIF for route planning and obstacle handling.
