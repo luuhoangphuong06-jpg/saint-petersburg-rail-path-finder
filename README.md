@@ -1,58 +1,130 @@
 # Saint Petersburg Rail Path Finder
 
-Ứng dụng desktop Python mô phỏng tìm đường đa phương thức tại Saint Petersburg bằng dữ liệu OpenStreetMap. App kết hợp mạng đường sắt và mạng đi bộ, hỗ trợ nhiều thuật toán tìm kiếm AI và lưu lịch sử chạy vào SQLite.
+A Python desktop application for multimodal route finding in Saint Petersburg using OpenStreetMap data, railway/walking graphs, and classic AI pathfinding algorithms.
 
-## Tính năng chính
+The app was built as an academic/personal project to explore how graph search algorithms behave on real urban transport data.
 
-- Tìm đường kết hợp đi bộ và tàu/tram/rail.
-- Hỗ trợ A*, Dijkstra, UCS, Greedy, BFS, DFS và IDS.
-- So sánh thuật toán theo thời gian chạy, số node duyệt và loại kết quả.
-- Hiển thị ga/trạm từ OpenStreetMap.
-- Đặt vật cản để mô phỏng sự cố và tìm tuyến thay thế.
-- Hiển thị chỉ dẫn hành trình từng bước.
-- Lưu lịch sử tìm kiếm, ga đi qua, vật cản và dữ liệu bản đồ vào SQLite/cache.
-- Có script đóng gói thành ứng dụng Windows `.exe`.
+## Features
 
-## Cài đặt
+- Interactive map GUI built with Tkinter, CustomTkinter, and tkintermapview.
+- Route planning between two user-selected points.
+- Multimodal routing using walking segments and railway/tram/rail segments.
+- Supported algorithms:
+  - A*
+  - Dijkstra
+  - Uniform Cost Search
+  - Greedy Best-First Search
+  - Breadth-First Search
+  - Depth-First Search
+  - Iterative Deepening Search
+- Algorithm comparison view showing execution time, searched nodes, route type, and distance.
+- Station/tram/rail stop extraction from OpenStreetMap.
+- Manual obstacle placement on the map to simulate blocked rail segments.
+- Step-by-step route instructions.
+- Search history viewer backed by SQLite.
+- Local cache/database for faster startup after the first run.
+- Windows `.exe` packaging script with PyInstaller.
 
-Khuyến nghị dùng Python 3.12 trên Windows.
+## Technologies Used
+
+- Python
+- Tkinter / CustomTkinter
+- tkintermapview
+- OSMnx
+- NetworkX
+- Pillow
+- SQLite
+- PyInstaller
+
+## Algorithms
+
+The project compares multiple graph search strategies on the same routing problem.
+
+| Algorithm | Main idea | Optimal on weighted graph? |
+|---|---|---|
+| A* | Uses actual path cost plus a geographic heuristic | Yes, with an admissible heuristic |
+| Dijkstra / UCS | Expands the lowest-cost known node first | Yes |
+| Greedy Search | Expands the node closest to the goal by heuristic | Not guaranteed |
+| BFS | Expands level by level | Only for unweighted graphs |
+| DFS | Explores deeply before backtracking | No |
+| IDS | Repeated depth-limited search | Not ideal for weighted routing |
+
+## Project Structure
+
+```text
+.
+├── app.py                  # Main GUI application
+├── config.py               # App constants and map settings
+├── database.py             # SQLite persistence
+├── pathfinder.py           # Search algorithm implementations
+├── route_logic.py          # Multimodal route selection
+├── spatial_index.py        # Lightweight spatial lookup helper
+├── test_all_cases.py       # Regression/smoke tests
+├── build_exe.ps1           # Windows packaging script
+├── requirements.txt
+└── README.md
+```
+
+## How to Run
+
+Python 3.12 on Windows is recommended.
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-## Chạy ứng dụng
-
-```powershell
 python app.py
 ```
 
-Lần chạy đầu có thể cần Internet để tải dữ liệu OpenStreetMap và ảnh nền bản đồ. Các lần sau app dùng cache cục bộ để mở nhanh hơn.
+The first run may require an Internet connection to download OpenStreetMap data and map tiles. Later runs use local cache files.
 
-## Kiểm thử
+## Tests
 
 ```powershell
 python test_all_cases.py
 ```
 
-## Đóng gói EXE
+## Build Windows EXE
 
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass
 .\build_exe.ps1
 ```
 
-Sau khi build, file phát hành nằm trong:
+The packaged app will be generated under:
 
 ```text
 dist\Saint Petersburg Rail Path Finder
 ```
 
-Khi gửi cho người khác, gửi cả thư mục hoặc file ZIP trong `dist`, không gửi riêng mỗi file `.exe`.
+When sharing the app, send the whole generated folder or ZIP package, not only the `.exe` file.
 
-## Ghi chú dữ liệu
+## My Role
 
-Repo không đưa lên GitHub các file nặng như cache bản đồ, database SQLite, môi trường ảo, file build và ZIP phát hành. Những file này được tạo lại khi chạy hoặc build app.
+In this project, I worked on:
 
+- Loading and processing OpenStreetMap transport data.
+- Building railway and walking graphs using OSMnx and NetworkX.
+- Extracting and validating stations/stops.
+- Implementing and comparing pathfinding algorithms.
+- Designing the desktop GUI for map interaction and route visualization.
+- Adding obstacle simulation, route history, and SQLite persistence.
+
+## Data Notes
+
+Large/generated files are intentionally excluded from GitHub:
+
+- map cache files
+- SQLite search history
+- virtual environments
+- build output
+- packaged `.exe`/`.zip` files
+
+These files can be regenerated locally by running or packaging the application.
+
+## Future Improvements
+
+- Add GTFS timetable data for more realistic train waiting times.
+- Show multiple alternative routes.
+- Add route preferences such as fastest route, least walking, or fewest transfers.
+- Add screenshots and demo GIFs to the repository.
