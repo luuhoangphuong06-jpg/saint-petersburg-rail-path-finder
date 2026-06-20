@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.venv/
+.venv_build/
+venv/
+env/
+
+# Local app data and generated map/database cache
+cache/
+*.sqlite3
+*.db
+*.jsonl
+*.csv
+
+# Build artifacts
+build/
+dist/
+*.spec
+*.zip
+*.exe
+
+# Bundled/portable Python runtimes used only for local packaging
+python_full/
+python_portable/
+
+# Temporary/editor files
+tempCodeRunnerFile.py
+tmp*/
+.vscode/
+.idea/
+
+# Local comparison/reference material
+other_group_app/
+pdf_sample_text.txt
+introduction_ai_text.txt
+

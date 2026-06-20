@@ -1,0 +1,16 @@
+AI RAILWAY PATHFINDING - HUONG DAN
+==================================
+
+1. Giai nen TOAN BO file ZIP.
+2. Mo thu muc RailwayPathfindingApp.
+3. Chay RailwayPathfindingApp.exe.
+4. Can ket noi Internet de tai anh nen ban do.
+
+Luu y:
+- Khong chay file EXE truc tiep ben trong file ZIP.
+- Khong xoa thu muc _internal.
+- Lan dau mo app co the mat them thoi gian de copy cache ban do.
+- Neu Windows SmartScreen hien canh bao, chon More info -> Run anyway.
+
+Du lieu nguoi dung va lich su tim kiem duoc luu rieng tai:
+%LOCALAPPDATA%\AI_Railway_Pathfinding

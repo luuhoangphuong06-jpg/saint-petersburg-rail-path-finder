@@ -1,0 +1,5 @@
+customtkinter
+tkintermapview
+osmnx<2.0
+networkx
+pillow

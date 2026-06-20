@@ -1,0 +1,664 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,top=2.2cm,bottom=2.2cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{fancyhdr}
+
+\usepackage{mathptmx}
+\renewcommand{\baselinestretch}{1.15}
+\setlength{\parindent}{0.8cm}
+\setlength{\parskip}{0.25em}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Báo cáo học phần Nhập môn Trí tuệ nhân tạo}
+\rhead{Tìm đường đi trên bản đồ}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\setlist[itemize]{itemsep=0.25em, topsep=0.25em}
+\setlist[enumerate]{itemsep=0.25em, topsep=0.25em}
+
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue!70!black},
+    stringstyle=\color{red!60!black},
+    commentstyle=\color{green!40!black},
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    tabsize=4
+}
+
+\newcommand{\placeholderfig}[2]{
+\begin{figure}[H]
+    \centering
+    \fbox{
+        \begin{minipage}[c][6cm][c]{0.88\textwidth}
+            \centering
+            \textbf{#1}\\[0.4cm]
+            Chèn ảnh chụp màn hình ứng dụng tại đây.
+        \end{minipage}
+    }
+    \caption{#2}
+\end{figure}
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\Large \textbf{ĐẠI HỌC BÁCH KHOA HÀ NỘI}}\\[0.25cm]
+    {\Large \textbf{TRƯỜNG CÔNG NGHỆ THÔNG TIN VÀ TRUYỀN THÔNG}}\\[0.25cm]
+    {\large ──────── * ───────}\\[1.8cm]
+
+    {\Huge \textbf{BÁO CÁO}}\\[0.6cm]
+    {\Large \textbf{HỌC PHẦN: NHẬP MÔN TRÍ TUỆ NHÂN TẠO}}\\[0.2cm]
+    {\large \textbf{(Mã học phần: IT3160)}}\\[0.8cm]
+
+    {\Large \textbf{BÀI TẬP NHÓM}}\\[0.5cm]
+    {\Large \textbf{Đề tài: ỨNG DỤNG TÌM ĐƯỜNG ĐI ĐA PHƯƠNG THỨC TRÊN BẢN ĐỒ ĐƯỜNG SẮT}}\\[1.2cm]
+
+    \begin{flushleft}
+        \hspace{1.5cm}\textbf{Nhóm sinh viên thực hiện:} Nhóm \ldots\\[0.5cm]
+    \end{flushleft}
+
+    \begin{center}
+    \renewcommand{\arraystretch}{1.35}
+    \begin{tabular}{|>{\centering\arraybackslash}p{5cm}|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{5.5cm}|}
+        \hline
+        \textbf{Họ và tên} & \textbf{MSSV} & \textbf{Email}\\
+        \hline
+        Lưu Hoàng Phương & 202416317 & \ldots@sis.hust.edu.vn\\
+        \hline
+        \ldots & \ldots & \ldots\\
+        \hline
+        \ldots & \ldots & \ldots\\
+        \hline
+    \end{tabular}
+    \end{center}
+
+    \vfill
+    {\large Hà Nội, tháng 5 năm 2026}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section*{I. Phân công công việc}
+\addcontentsline{toc}{section}{I. Phân công công việc}
+
+\begin{longtable}{|>{\centering\arraybackslash}p{4cm}|>{\centering\arraybackslash}p{2.5cm}|p{8cm}|}
+\hline
+\textbf{Họ và tên} & \textbf{MSSV} & \textbf{Công việc}\\
+\hline
+Lưu Hoàng Phương & 202416317 &
+Khảo sát bài toán, xây dựng giao diện Python, triển khai các thuật toán tìm kiếm, xử lý dữ liệu bản đồ, viết báo cáo và kiểm thử chương trình.\\
+\hline
+\ldots & \ldots &
+Hỗ trợ thu thập tài liệu, kiểm thử các trường hợp tìm đường và chuẩn bị hình ảnh minh họa.\\
+\hline
+\ldots & \ldots &
+Hỗ trợ trình bày báo cáo, đánh giá kết quả và chuẩn bị phần thuyết trình.\\
+\hline
+\end{longtable}
+
+\section*{II. Đề tài}
+\addcontentsline{toc}{section}{II. Đề tài}
+
+\subsection*{1. Giới thiệu dự án}
+\addcontentsline{toc}{subsection}{1. Giới thiệu dự án}
+
+Bài toán tìm đường là một trong những bài toán quan trọng của trí tuệ nhân tạo và khoa học máy tính. Trong thực tế, bài toán này xuất hiện trong hệ thống định vị, bản đồ số, giao thông thông minh, robot tự hành và các ứng dụng hỗ trợ ra quyết định. Mục tiêu chính của bài toán là xác định một tuyến đường hợp lý từ điểm xuất phát đến điểm đích trong một không gian đã biết, đồng thời xét đến các ràng buộc như chi phí di chuyển, vật cản, thời gian và khả năng kết nối của mạng lưới.
+
+Trong dự án này, nhóm xây dựng một ứng dụng desktop bằng Python cho phép người dùng tìm đường trên bản đồ thực tế. Ứng dụng sử dụng dữ liệu từ OpenStreetMap thông qua thư viện \texttt{osmnx}, hiển thị bản đồ bằng \texttt{tkintermapview}, và cài đặt nhiều thuật toán tìm kiếm như A*, Dijkstra/UCS, Greedy Best-First Search, BFS, DFS và IDS. Khác với các bài toán bản đồ dạng lưới đơn giản, ứng dụng làm việc trên đồ thị giao thông thật, gồm các node địa lý, cạnh đường ray, ga tàu và các đoạn đi bộ nối từ vị trí người dùng đến ga.
+
+Đề tài tập trung vào việc mô hình hóa bài toán tìm đường đa phương thức, trong đó tuyến đường có thể gồm:
+\begin{itemize}
+    \item Đoạn đi bộ từ điểm xuất phát đến ga phù hợp.
+    \item Đoạn di chuyển bằng tàu/rail/tram/subway trên mạng lưới đường sắt.
+    \item Đoạn đi bộ từ ga xuống tàu đến điểm đích.
+\end{itemize}
+
+\subsection*{2. Biểu diễn không gian bài toán}
+\addcontentsline{toc}{subsection}{2. Biểu diễn không gian bài toán}
+
+Không gian bài toán được biểu diễn dưới dạng đồ thị:
+\[
+G=(V,E)
+\]
+Trong đó:
+\begin{itemize}
+    \item $V$ là tập các node trên bản đồ. Mỗi node có tọa độ địa lý $(lat, lon)$.
+    \item $E$ là tập các cạnh nối giữa các node. Mỗi cạnh có trọng số là chiều dài thực tế hoặc chi phí di chuyển.
+    \item Một số node được gắn nhãn \texttt{is\_station=True} để biểu diễn ga tàu, trạm tram hoặc lối vào subway.
+\end{itemize}
+
+Trạng thái ban đầu:
+\[
+N_0 = (lat_0, lon_0)
+\]
+là tọa độ điểm xuất phát do người dùng chọn trên bản đồ.
+
+Trạng thái đích:
+\[
+N_g = (lat_g, lon_g)
+\]
+là tọa độ điểm cần đến.
+
+Vì điểm người dùng chọn có thể không nằm đúng trên node của đồ thị đường sắt, hệ thống cần tìm các ga ứng viên gần điểm đi và điểm đến. Sau đó, thuật toán tìm kiếm được chạy trên mạng lưới rail từ ga lên tàu đến ga xuống tàu.
+
+\subsection*{3. Mục tiêu của dự án}
+\addcontentsline{toc}{subsection}{3. Mục tiêu của dự án}
+
+Dự án được xây dựng với các mục tiêu chính sau:
+\begin{itemize}
+    \item Xây dựng ứng dụng bản đồ tương tác cho phép chọn điểm đi, điểm đến và vật cản trực tiếp trên bản đồ.
+    \item Tải và xử lý dữ liệu bản đồ thực tế từ OpenStreetMap.
+    \item Cài đặt và so sánh các thuật toán tìm kiếm đường đi gồm A*, Dijkstra/UCS, Greedy, BFS, DFS và IDS.
+    \item Kết hợp đi bộ và tàu để tạo tuyến đường đa phương thức.
+    \item Hiển thị kết quả gồm tuyến đường, thời gian ước lượng, quãng đường, số node đã duyệt và tốc độ chạy thuật toán.
+    \item Hạn chế tình trạng treo giao diện bằng cách chạy tải bản đồ và tìm kiếm trong luồng nền.
+\end{itemize}
+
+\subsection*{4. Tổng quan về dự án}
+\addcontentsline{toc}{subsection}{4. Tổng quan về dự án}
+
+Ứng dụng tập trung vào khu vực Saint Petersburg, Nga. Đây là khu vực có mạng lưới rail, tram và subway tương đối phức tạp, phù hợp để kiểm thử các thuật toán tìm kiếm trên dữ liệu thật. Người dùng có thể thao tác với bản đồ như sau:
+\begin{itemize}
+    \item Chuột phải để chọn điểm đi.
+    \item Chuột phải để chọn điểm đến.
+    \item Đặt vật cản để loại bỏ một node khỏi quá trình tìm kiếm.
+    \item Chọn thuật toán cần sử dụng trong danh sách.
+    \item Bấm nút tìm đường hoặc so sánh thuật toán.
+\end{itemize}
+
+Kết quả được trực quan hóa bằng các đường màu:
+\begin{itemize}
+    \item Màu xám biểu diễn đoạn đi bộ hoặc đoạn nối thẳng từ vị trí người dùng đến ga.
+    \item Màu xanh biểu diễn đoạn đi bằng tàu trên mạng rail.
+    \item Marker riêng biểu diễn ga lên tàu và ga xuống tàu.
+\end{itemize}
+
+\section*{III. Phương pháp}
+\addcontentsline{toc}{section}{III. Phương pháp}
+
+\subsection*{1. Phương pháp tìm kiếm lời giải}
+\addcontentsline{toc}{subsection}{1. Phương pháp tìm kiếm lời giải}
+
+Hệ thống sử dụng phương pháp tìm kiếm trên đồ thị có trọng số. Quy trình tổng quát gồm các bước:
+\begin{enumerate}
+    \item Nhận tọa độ điểm đi và điểm đến từ người dùng.
+    \item Tìm các ga ứng viên gần điểm đi và điểm đến.
+    \item Ghép các cặp ga khả thi và ưu tiên cặp có tổng khoảng cách đi bộ nhỏ.
+    \item Kiểm tra hai ga có thuộc cùng thành phần liên thông của đồ thị hay không.
+    \item Chạy thuật toán tìm kiếm trên đồ thị rail.
+    \item Tính tổng chi phí gồm đi bộ, đi tàu và thời gian chờ tàu.
+    \item Chọn tuyến có thời gian tốt nhất và hiển thị lên bản đồ.
+\end{enumerate}
+
+\subsubsection*{1.1. Xác định đầu vào}
+\addcontentsline{toc}{subsubsection}{1.1. Xác định đầu vào}
+
+Đầu vào từ phía người dùng gồm:
+\begin{itemize}
+    \item Điểm xuất phát $A=(lat_A, lon_A)$.
+    \item Điểm đích $B=(lat_B, lon_B)$.
+    \item Thuật toán tìm kiếm được chọn.
+    \item Danh sách vật cản, nếu có.
+\end{itemize}
+
+Đầu vào từ dữ liệu bản đồ gồm:
+\begin{itemize}
+    \item Graph rail được tải bằng \texttt{ox.graph\_from\_point}.
+    \item Danh sách ga được lấy bằng \texttt{ox.features\_from\_point}.
+    \item Graph đi bộ được dùng để ước lượng quãng đường đi bộ đến ga.
+\end{itemize}
+
+\subsubsection*{1.2. Xây dựng đồ thị không gian}
+\addcontentsline{toc}{subsubsection}{1.2. Xây dựng đồ thị không gian}
+
+Đồ thị rail ban đầu được lấy từ OpenStreetMap với bộ lọc các tuyến \texttt{rail}, \texttt{subway} và \texttt{tram}. Mỗi node chứa tọa độ địa lý, mỗi cạnh chứa chiều dài đoạn đường. Các ga được tìm từ các đối tượng OSM có thẻ \texttt{railway=station}, \texttt{tram\_stop} hoặc \texttt{subway\_entrance}. Với mỗi ga thật, chương trình tìm node rail gần nhất và gắn nhãn \texttt{is\_station}.
+
+Để hỗ trợ chuyển trạm, chương trình bổ sung một số cạnh transfer giữa các node ga ở gần nhau. Các cạnh này có chi phí cộng thêm \texttt{TRANSFER\_PENALTY} nhằm tránh việc thuật toán lạm dụng các đoạn chuyển trạm quá nhiều.
+
+\subsubsection*{1.3. Trọng số và hàm đánh giá}
+\addcontentsline{toc}{subsubsection}{1.3. Trọng số và hàm đánh giá}
+
+Trọng số cạnh được xác định dựa trên chiều dài thực tế. Với cạnh chuyển trạm, chi phí được tăng thêm để mô phỏng thời gian đổi tuyến:
+\[
+cost(u,v)=length(u,v)+penalty
+\]
+
+Với A* và Greedy, hệ thống sử dụng hàm heuristic dựa trên khoảng cách Haversine giữa node hiện tại và node đích:
+\[
+h(n)=2R\arctan\left(\frac{\sqrt{a}}{\sqrt{1-a}}\right)
+\]
+trong đó:
+\[
+a=\sin^2\left(\frac{\Delta \varphi}{2}\right)+
+\cos(\varphi_1)\cos(\varphi_2)\sin^2\left(\frac{\Delta \lambda}{2}\right)
+\]
+
+Haversine phù hợp vì tọa độ trên bản đồ là vĩ độ và kinh độ, không phải tọa độ phẳng.
+
+\subsubsection*{1.4. Xử lý điều kiện thực tế}
+\addcontentsline{toc}{subsubsection}{1.4. Xử lý điều kiện thực tế}
+
+Ứng dụng xử lý một số điều kiện thực tế:
+\begin{itemize}
+    \item \textbf{Vật cản:} node bị đánh dấu là vật cản sẽ không được thêm vào danh sách kề.
+    \item \textbf{Graph rời rạc:} trước khi chạy thuật toán, hệ thống kiểm tra hai ga có cùng thành phần liên thông hay không.
+    \item \textbf{Timeout:} mỗi lần tìm kiếm có giới hạn thời gian để tránh treo chương trình.
+    \item \textbf{Giới hạn node duyệt:} nếu thuật toán duyệt quá nhiều node, quá trình tìm kiếm dừng lại.
+    \item \textbf{Fallback đi bộ:} nếu không có tuyến rail phù hợp, hệ thống trả về phương án đi bộ hoặc thông báo không tìm thấy ga phù hợp.
+\end{itemize}
+
+\subsection*{2. Các thuật toán tìm kiếm}
+\addcontentsline{toc}{subsection}{2. Các thuật toán tìm kiếm}
+
+\subsubsection*{2.1. Thuật toán A*}
+\addcontentsline{toc}{subsubsection}{2.1. Thuật toán A*}
+
+A* là thuật toán tìm kiếm có thông tin, kết hợp chi phí thực tế $g(n)$ và chi phí ước lượng $h(n)$:
+\[
+f(n)=g(n)+h(n)
+\]
+Trong ứng dụng, $g(n)$ là tổng chiều dài đã đi trên graph, còn $h(n)$ là khoảng cách Haversine từ node hiện tại đến node đích. Thuật toán ưu tiên mở rộng node có giá trị $f(n)$ nhỏ nhất, nhờ đó thường duyệt ít node hơn Dijkstra/UCS nhưng vẫn tìm được đường tốt nếu heuristic phù hợp.
+
+\begin{lstlisting}[style=pythonstyle, caption={Ý tưởng cài đặt thuật toán A*}]
+pq = [(heuristic(start, goal), start)]
+cost_so_far[start] = 0
+
+while pq:
+    current = pop_min_f_score(pq)
+    if current == goal:
+        return reconstruct_path()
+
+    for neighbor in adj[current]:
+        new_cost = cost_so_far[current] + edge_cost
+        if new_cost < cost_so_far.get(neighbor, inf):
+            cost_so_far[neighbor] = new_cost
+            came_from[neighbor] = current
+            push(pq, new_cost + heuristic(neighbor, goal))
+\end{lstlisting}
+
+\subsubsection*{2.2. Thuật toán Dijkstra và UCS}
+\addcontentsline{toc}{subsubsection}{2.2. Thuật toán Dijkstra và UCS}
+
+Dijkstra tìm đường đi ngắn nhất trong đồ thị có trọng số không âm. UCS trong bài toán này có bản chất tương tự Dijkstra vì luôn mở rộng node có tổng chi phí thực tế nhỏ nhất. Thuật toán không sử dụng heuristic nên thường duyệt nhiều node hơn A*, nhưng có tính đảm bảo tối ưu tốt với trọng số không âm.
+
+\subsubsection*{2.3. Thuật toán Greedy Best-First Search}
+\addcontentsline{toc}{subsubsection}{2.3. Thuật toán Greedy Best-First Search}
+
+Greedy Best-First Search chỉ ưu tiên node có heuristic nhỏ nhất:
+\[
+f(n)=h(n)
+\]
+Thuật toán này thường chạy nhanh vì luôn hướng về phía đích. Tuy nhiên, do bỏ qua chi phí thực tế đã đi, Greedy không đảm bảo tìm được đường ngắn nhất.
+
+\subsubsection*{2.4. Thuật toán BFS}
+\addcontentsline{toc}{subsubsection}{2.4. Thuật toán BFS}
+
+BFS duyệt đồ thị theo từng mức bằng hàng đợi FIFO. Trong đồ thị không trọng số, BFS tìm được đường đi có số cạnh ít nhất. Tuy nhiên, với bản đồ thực tế, mỗi cạnh có chiều dài khác nhau nên BFS không đảm bảo tối ưu về quãng đường hoặc thời gian.
+
+\subsubsection*{2.5. Thuật toán DFS}
+\addcontentsline{toc}{subsubsection}{2.5. Thuật toán DFS}
+
+DFS duyệt sâu bằng ngăn xếp. Thuật toán này có ưu điểm cài đặt đơn giản và dùng ít bộ nhớ trong một số trường hợp, nhưng không đảm bảo tối ưu. Kết quả của DFS phụ thuộc nhiều vào thứ tự duyệt các node kề.
+
+\subsubsection*{2.6. Thuật toán IDS}
+\addcontentsline{toc}{subsubsection}{2.6. Thuật toán IDS}
+
+IDS kết hợp DFS giới hạn độ sâu và chiến lược tăng dần độ sâu. Thuật toán giúp minh họa quá trình tìm kiếm theo độ sâu nhưng không phù hợp nhất cho đồ thị bản đồ lớn. Trong ứng dụng, IDS được giới hạn độ sâu và thời gian chạy để tránh treo chương trình.
+
+\subsubsection*{2.7. So sánh các thuật toán}
+\addcontentsline{toc}{subsubsection}{2.7. So sánh các thuật toán}
+
+\begin{longtable}{|p{2.7cm}|p{3cm}|p{3.2cm}|p{2.7cm}|p{3cm}|}
+\hline
+\textbf{Thuật toán} & \textbf{Chiến lược} & \textbf{Ưu điểm} & \textbf{Hạn chế} & \textbf{Vai trò trong ứng dụng}\\
+\hline
+A* & Dùng $g(n)+h(n)$ & Nhanh, có định hướng, phù hợp bản đồ lớn & Phụ thuộc chất lượng heuristic & Thuật toán khuyến nghị\\
+\hline
+Dijkstra/UCS & Mở rộng chi phí nhỏ nhất & Đảm bảo tối ưu với trọng số không âm & Có thể duyệt nhiều node & Mốc so sánh với A*\\
+\hline
+Greedy & Ưu tiên gần đích & Rất nhanh trong nhiều trường hợp & Không đảm bảo tối ưu & Minh họa tìm kiếm tham lam\\
+\hline
+BFS & Duyệt theo mức & Đơn giản, hoàn chỉnh với graph hữu hạn & Không tối ưu với trọng số khác nhau & Minh họa duyệt rộng\\
+\hline
+DFS & Duyệt sâu & Dễ cài đặt & Không tối ưu, dễ đi vòng & Minh họa duyệt sâu\\
+\hline
+IDS & DFS tăng dần độ sâu & Kết hợp ý tưởng BFS và DFS & Chậm trên graph lớn & Minh họa tìm kiếm lặp sâu\\
+\hline
+\end{longtable}
+
+\section*{IV. Thiết kế hệ thống và công nghệ sử dụng}
+\addcontentsline{toc}{section}{IV. Thiết kế hệ thống và công nghệ sử dụng}
+
+\subsection*{1. Kiến trúc chương trình}
+\addcontentsline{toc}{subsection}{1. Kiến trúc chương trình}
+
+Sau khi cải tiến, mã nguồn được chia thành nhiều file để dễ bảo trì:
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{File} & \textbf{Vai trò}\\
+\hline
+\texttt{app.py} & Xử lý giao diện, sự kiện người dùng, tải bản đồ, vẽ tuyến đường và điều phối tìm kiếm.\\
+\hline
+\texttt{config.py} & Chứa cấu hình hệ thống như tốc độ đi bộ, tốc độ tàu, bán kính tìm kiếm, timeout và đường dẫn cache.\\
+\hline
+\texttt{pathfinder.py} & Cài đặt lớp \texttt{PathFinder} và các thuật toán A*, Dijkstra/UCS, Greedy, BFS, DFS, IDS.\\
+\hline
+\texttt{route\_logic.py} & Chứa logic chọn ga ứng viên, ghép cặp ga, tính thời gian tuyến đa phương thức và trả về kết quả.\\
+\hline
+\texttt{spatial\_index.py} & Hỗ trợ truy vấn node/ga gần tọa độ bằng chỉ mục không gian đơn giản.\\
+\hline
+\texttt{tcl\_tk\_fix.py} & Hỗ trợ sửa lỗi Tcl/Tk khi chạy Tkinter hoặc đóng gói bằng PyInstaller trên Windows.\\
+\hline
+\end{longtable}
+
+\subsection*{2. Luồng xử lý chính}
+\addcontentsline{toc}{subsection}{2. Luồng xử lý chính}
+
+Luồng xử lý của ứng dụng:
+\begin{enumerate}
+    \item Khởi động giao diện \texttt{customtkinter}.
+    \item Tải graph rail, graph đi bộ và dữ liệu ga trong luồng nền.
+    \item Người dùng chọn điểm đi và điểm đến trên bản đồ.
+    \item Người dùng chọn thuật toán và bấm nút tìm đường.
+    \item Worker thread gọi \texttt{find\_smart\_route}.
+    \item Kết quả được gửi về main thread để vẽ lên bản đồ.
+\end{enumerate}
+
+\subsection*{3. Quản lý trạng thái và đa luồng}
+\addcontentsline{toc}{subsection}{3. Quản lý trạng thái và đa luồng}
+
+Vì tải dữ liệu bản đồ và chạy thuật toán có thể mất nhiều thời gian, ứng dụng sử dụng \texttt{threading.Thread} để xử lý trong nền. Điều này giúp giao diện không bị đơ trong lúc tải dữ liệu hoặc tìm đường. Các biến trạng thái quan trọng gồm:
+\begin{itemize}
+    \item \texttt{self.G}: graph rail.
+    \item \texttt{self.walk\_G}: graph đi bộ.
+    \item \texttt{self.obstacles}: tập node bị chặn.
+    \item \texttt{self.\_finder\_cache}: cache đối tượng tìm kiếm.
+    \item \texttt{self.path\_objects}: các đối tượng đường đang được vẽ.
+\end{itemize}
+
+Một số khóa đồng bộ được sử dụng để giảm rủi ro race condition khi luồng nền và giao diện cùng đọc/ghi dữ liệu.
+
+\subsection*{4. Thiết kế UI/UX}
+\addcontentsline{toc}{subsection}{4. Thiết kế UI/UX}
+
+Giao diện gồm hai vùng chính:
+\begin{itemize}
+    \item \textbf{Sidebar bên trái:} chọn thuật toán, tìm đường, làm mới, xóa vật cản, hiển thị ga và xem kết quả.
+    \item \textbf{Bản đồ bên phải:} hiển thị bản đồ tương tác, marker điểm đi/đến, marker ga và đường đi.
+\end{itemize}
+
+Ưu điểm của thiết kế:
+\begin{itemize}
+    \item Người dùng thao tác trực tiếp trên bản đồ.
+    \item Kết quả được hiển thị bằng màu sắc dễ phân biệt.
+    \item Có thông tin số node duyệt và thời gian chạy để phục vụ so sánh thuật toán.
+    \item Có chức năng đặt vật cản để mô phỏng tình huống tuyến đường bị chặn.
+\end{itemize}
+
+\subsection*{5. Công nghệ sử dụng}
+\addcontentsline{toc}{subsection}{5. Công nghệ sử dụng}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Công nghệ} & \textbf{Mục đích sử dụng}\\
+\hline
+Python & Ngôn ngữ lập trình chính.\\
+\hline
+Tkinter / CustomTkinter & Xây dựng giao diện desktop.\\
+\hline
+tkintermapview & Hiển thị bản đồ tương tác.\\
+\hline
+OSMnx & Tải dữ liệu giao thông thực tế từ OpenStreetMap.\\
+\hline
+NetworkX & Biểu diễn và xử lý đồ thị.\\
+\hline
+Pillow & Tạo icon marker ga trên bản đồ.\\
+\hline
+PyInstaller & Đóng gói ứng dụng thành file chạy trên Windows.\\
+\hline
+\end{longtable}
+
+\subsection*{6. Hướng dẫn cài đặt và chạy dự án}
+\addcontentsline{toc}{subsection}{6. Hướng dẫn cài đặt và chạy dự án}
+
+Cài đặt thư viện:
+\begin{lstlisting}[style=pythonstyle, caption={Cài đặt thư viện cần thiết}]
+pip install -r requirements.txt
+\end{lstlisting}
+
+Chạy ứng dụng:
+\begin{lstlisting}[style=pythonstyle, caption={Chạy ứng dụng}]
+python app.py
+\end{lstlisting}
+
+Đóng gói thành file \texttt{.exe}:
+\begin{lstlisting}[style=pythonstyle, caption={Đóng gói bằng PyInstaller}]
+Set-ExecutionPolicy -Scope Process Bypass
+.\build_exe.ps1
+\end{lstlisting}
+
+\section*{V. Kết quả}
+\addcontentsline{toc}{section}{V. Kết quả}
+
+Phần này trình bày các kết quả đạt được của sản phẩm. Khi hoàn thiện báo cáo cuối cùng, có thể thay các khung minh họa bên dưới bằng ảnh chụp màn hình thật từ ứng dụng.
+
+\subsection*{1. Giao diện chính}
+\addcontentsline{toc}{subsection}{1. Giao diện chính}
+
+Giao diện chính hiển thị bản đồ và thanh chức năng. Người dùng có thể chọn thuật toán từ menu, sau đó chọn điểm đi và điểm đến bằng thao tác chuột phải.
+
+\placeholderfig{Giao diện chính của ứng dụng}{Giao diện chính của ứng dụng tìm đường}
+
+\subsection*{2. Kết quả tìm đường với thuật toán A*}
+\addcontentsline{toc}{subsection}{2. Kết quả tìm đường với thuật toán A*}
+
+Khi chọn thuật toán A*, hệ thống sử dụng heuristic Haversine để ưu tiên các node có khả năng gần đích hơn. Kết quả thường có thời gian chạy nhanh và số node duyệt thấp hơn so với Dijkstra/UCS.
+
+\placeholderfig{Kết quả tìm đường bằng A*}{Kết quả tìm đường với thuật toán A*}
+
+\subsection*{3. Kết quả tìm đường với Dijkstra/UCS}
+\addcontentsline{toc}{subsection}{3. Kết quả tìm đường với Dijkstra/UCS}
+
+Dijkstra/UCS mở rộng node theo chi phí thực tế nhỏ nhất. Kết quả phù hợp để so sánh với A* vì thuật toán này không dùng heuristic.
+
+\placeholderfig{Kết quả tìm đường bằng Dijkstra/UCS}{Kết quả tìm đường với thuật toán Dijkstra/UCS}
+
+\subsection*{4. Kết quả với Greedy, BFS, DFS và IDS}
+\addcontentsline{toc}{subsection}{4. Kết quả với Greedy, BFS, DFS và IDS}
+
+Các thuật toán Greedy, BFS, DFS và IDS được dùng chủ yếu để minh họa sự khác biệt giữa các chiến lược tìm kiếm. Greedy thường nhanh nhưng không đảm bảo tối ưu. BFS tối ưu theo số cạnh trong graph không trọng số. DFS và IDS có ý nghĩa minh họa nhưng không phải lựa chọn tốt nhất cho dữ liệu bản đồ lớn.
+
+\placeholderfig{So sánh các thuật toán khác}{Kết quả minh họa với Greedy, BFS, DFS và IDS}
+
+\subsection*{5. Chức năng vật cản}
+\addcontentsline{toc}{subsection}{5. Chức năng vật cản}
+
+Ứng dụng cho phép đặt vật cản trên bản đồ. Khi một node bị đánh dấu là vật cản, node đó và các cạnh liên quan sẽ không được xét trong quá trình tìm kiếm. Chức năng này giúp mô phỏng trường hợp tuyến đường bị chặn hoặc không thể sử dụng.
+
+\placeholderfig{Đặt vật cản trên bản đồ}{Kết quả tìm đường khi có vật cản}
+
+\subsection*{6. Chức năng hiển thị ga và chọn tuyến đa phương thức}
+\addcontentsline{toc}{subsection}{6. Chức năng hiển thị ga và chọn tuyến đa phương thức}
+
+Ứng dụng có thể hiển thị các ga tàu, tram stop hoặc subway entrance lấy từ OpenStreetMap. Khi tìm đường, hệ thống chọn cặp ga phù hợp dựa trên khoảng cách đi bộ và khả năng kết nối trên graph rail.
+
+\placeholderfig{Hiển thị các ga trên bản đồ}{Danh sách ga và tuyến đa phương thức}
+
+\subsection*{7. Bảng so sánh thuật toán}
+\addcontentsline{toc}{subsection}{7. Bảng so sánh thuật toán}
+
+Ứng dụng có chức năng so sánh nhiều thuật toán trên cùng một cặp điểm đi/đến. Bảng so sánh có thể gồm các cột:
+\begin{itemize}
+    \item Tên thuật toán.
+    \item Trạng thái tìm được đường hay không.
+    \item Thời gian ước lượng của tuyến.
+    \item Quãng đường.
+    \item Số node đã duyệt.
+    \item Thời gian chạy thực tế.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Mẫu bảng so sánh kết quả thuật toán}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{2.4cm}|p{2.1cm}|p{2.3cm}|p{2.4cm}|p{2.3cm}|p{2.3cm}|}
+\hline
+\textbf{Thuật toán} & \textbf{Kết quả} & \textbf{Thời gian tuyến} & \textbf{Quãng đường} & \textbf{Node duyệt} & \textbf{Thời gian chạy}\\
+\hline
+A* & Tìm thấy & \ldots phút & \ldots m & \ldots & \ldots s\\
+\hline
+Dijkstra & Tìm thấy & \ldots phút & \ldots m & \ldots & \ldots s\\
+\hline
+Greedy & Tìm thấy & \ldots phút & \ldots m & \ldots & \ldots s\\
+\hline
+BFS & Tìm thấy & \ldots phút & \ldots m & \ldots & \ldots s\\
+\hline
+DFS & Tìm thấy & \ldots phút & \ldots m & \ldots & \ldots s\\
+\hline
+IDS & Tìm thấy/Timeout & \ldots phút & \ldots m & \ldots & \ldots s\\
+\hline
+\end{tabular}
+\end{table}
+
+\section*{VI. Kết luận}
+\addcontentsline{toc}{section}{VI. Kết luận}
+
+\subsection*{1. Kết luận}
+\addcontentsline{toc}{subsection}{1. Kết luận}
+
+Dự án đã xây dựng được một ứng dụng tìm đường trực quan trên bản đồ thực tế, hỗ trợ nhiều thuật toán tìm kiếm và có khả năng kết hợp giữa đi bộ và tàu. Ứng dụng cho thấy cách mô hình hóa bản đồ thành đồ thị, cách dùng heuristic trong A*, và cách so sánh các thuật toán tìm kiếm trong cùng một điều kiện đầu vào.
+
+Các kết quả chính đạt được:
+\begin{itemize}
+    \item Xây dựng được giao diện bản đồ tương tác bằng Python.
+    \item Tải và xử lý được dữ liệu bản đồ từ OpenStreetMap.
+    \item Cài đặt được nhiều thuật toán tìm kiếm phổ biến.
+    \item Hiển thị được tuyến đường, ga lên/xuống, quãng đường, thời gian và số node duyệt.
+    \item Có cơ chế timeout, cache và chạy nền để hạn chế treo giao diện.
+\end{itemize}
+
+\subsection*{2. Hạn chế}
+\addcontentsline{toc}{subsection}{2. Hạn chế}
+
+Một số hạn chế còn tồn tại:
+\begin{itemize}
+    \item Dữ liệu OpenStreetMap có thể thiếu hoặc chưa chính xác ở một số khu vực.
+    \item Thời gian tàu chỉ là ước lượng, chưa dùng lịch tàu thật.
+    \item Một số thuật toán như DFS và IDS không phù hợp cho đồ thị bản đồ lớn.
+    \item Đoạn đi bộ trong một số trường hợp vẫn là xấp xỉ, phụ thuộc vào chất lượng graph đi bộ.
+    \item Việc đóng gói \texttt{.exe} trên Windows cần môi trường Python có Tcl/Tk đầy đủ.
+\end{itemize}
+
+\subsection*{3. Hướng phát triển}
+\addcontentsline{toc}{subsection}{3. Hướng phát triển}
+
+Trong tương lai, dự án có thể được phát triển thêm theo các hướng:
+\begin{itemize}
+    \item Bổ sung dữ liệu lịch tàu hoặc thời gian chờ theo từng tuyến.
+    \item Tối ưu lựa chọn ga bằng dữ liệu đi bộ chính xác hơn.
+    \item Thêm chế độ so sánh trực quan quá trình duyệt node của từng thuật toán.
+    \item Hỗ trợ nhiều thành phố và nhiều loại phương tiện công cộng.
+    \item Lưu lịch sử tìm kiếm và xuất báo cáo kết quả tự động.
+    \item Cải thiện đóng gói ứng dụng để dễ chạy trên các máy Windows không cài Python.
+\end{itemize}
+
+\newpage
+\section*{Tài liệu tham khảo}
+\addcontentsline{toc}{section}{Tài liệu tham khảo}
+
+\begin{enumerate}
+    \item Stuart Russell, Peter Norvig, \textit{Artificial Intelligence: A Modern Approach}.
+    \item NetworkX Documentation, \url{https://networkx.org/}.
+    \item OSMnx Documentation, \url{https://osmnx.readthedocs.io/}.
+    \item OpenStreetMap, \url{https://www.openstreetmap.org/}.
+    \item Python Tkinter Documentation, \url{https://docs.python.org/3/library/tkinter.html}.
+\end{enumerate}
+
+\newpage
+\appendix
+\section*{Phụ lục A. Một số đoạn mã chính}
+\addcontentsline{toc}{section}{Phụ lục A. Một số đoạn mã chính}
+
+\subsection*{A.1. Hàm Haversine}
+
+\begin{lstlisting}[style=pythonstyle, caption={Tính khoảng cách Haversine}]
+def fast_haversine(lat1, lon1, lat2, lon2):
+    R = 6371000
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+    a = (
+        math.sin(dphi / 2) ** 2
+        + math.cos(phi1) * math.cos(phi2)
+        * math.sin(dlambda / 2) ** 2
+    )
+    return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+\end{lstlisting}
+
+\subsection*{A.2. Chọn cặp ga ứng viên}
+
+\begin{lstlisting}[style=pythonstyle, caption={Ý tưởng chọn cặp ga ứng viên}]
+candidate_pairs = []
+for d_walk_a, s_station in start_candidates:
+    for d_walk_b, g_station in goal_candidates:
+        if s_station == g_station:
+            continue
+        if not finder.same_component(s_station, g_station):
+            continue
+        candidate_pairs.append(
+            (d_walk_a + d_walk_b, d_walk_a, s_station, d_walk_b, g_station)
+        )
+
+candidate_pairs.sort(key=lambda item: item[0])
+\end{lstlisting}
+
+\subsection*{A.3. Tìm đường trên luồng nền}
+
+\begin{lstlisting}[style=pythonstyle, caption={Chạy tìm đường trong background thread}]
+def run_search(self):
+    start = self.start_coords
+    goal = self.goal_coords
+    self.search_btn.configure(state="disabled", text="Dang tim...")
+    threading.Thread(
+        target=self._search_worker,
+        args=(start, goal),
+        daemon=True
+    ).start()
+\end{lstlisting}
+
+\end{document}

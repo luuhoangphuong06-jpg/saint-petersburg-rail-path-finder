@@ -1,0 +1,475 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3cm,right=2cm]{geometry}
+\usepackage{fontspec}
+\usepackage[vietnamese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{caption}
+
+\setmainfont{Times New Roman}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Báo cáo Bài tập lớn}
+\rhead{Ứng dụng tìm đường đa phương thức}
+\cfoot{Trang \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red!60!black},
+    commentstyle=\color{green!40!black},
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    tabsize=4
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\Large \textbf{ĐẠI HỌC BÁCH KHOA HÀ NỘI}}\\[0.3cm]
+    {\Large \textbf{TRƯỜNG CÔNG NGHỆ THÔNG TIN VÀ TRUYỀN THÔNG}}\\[2cm]
+
+    {\Large \textbf{BÁO CÁO BÀI TẬP LỚN}}\\[0.5cm]
+    {\Large \textbf{Đề tài: Ứng dụng tìm đường đa phương thức sử dụng các thuật toán tìm kiếm}}\\[1.5cm]
+
+    \begin{flushleft}
+    \hspace{2cm}\textbf{Lớp học phần:} \textless điền mã lớp học phần\textgreater\\[0.4cm]
+    \hspace{2cm}\textbf{Sinh viên thực hiện:} \textless điền họ tên\textgreater\\[0.4cm]
+    \hspace{2cm}\textbf{MSSV:} \textless điền mã sinh viên\textgreater\\[0.4cm]
+    \hspace{2cm}\textbf{Giảng viên hướng dẫn:} \textless điền tên giảng viên\textgreater
+    \end{flushleft}
+
+    \vfill
+    {\large Tháng 5 năm 2026}
+\end{titlepage}
+
+\pagenumbering{roman}
+
+\section*{Tóm tắt nội dung}
+\addcontentsline{toc}{section}{Tóm tắt nội dung}
+
+Báo cáo này trình bày quá trình xây dựng một ứng dụng tìm đường đa phương thức trên bản đồ thực tế. Ứng dụng sử dụng Python kết hợp với các thư viện \texttt{customtkinter}, \texttt{tkintermapview}, \texttt{osmnx} và \texttt{networkx} để tải dữ liệu đường ray từ OpenStreetMap, hiển thị bản đồ trực quan và thực hiện tìm đường giữa hai điểm do người dùng chọn.
+
+Hệ thống hỗ trợ nhiều thuật toán tìm kiếm gồm A*, Greedy Best-First Search, Uniform Cost Search, Breadth-First Search, Depth-First Search và Iterative Deepening Search. Trong đó, A* và UCS phù hợp hơn cho bài toán tìm đường thực tế vì có xét chi phí quãng đường, còn BFS, DFS và IDS chủ yếu có ý nghĩa minh họa sự khác nhau giữa các chiến lược duyệt đồ thị. Ứng dụng cũng bổ sung các cơ chế chống treo giao diện như chạy thuật toán trong luồng nền, giới hạn số node duyệt, timeout tìm kiếm và xử lý lỗi khi dữ liệu bản đồ không đầy đủ.
+
+Kết quả cho thấy mô hình ứng dụng có thể biểu diễn tương đối rõ bài toán tìm đường trên mạng lưới giao thông đường sắt, đồng thời minh họa được ưu điểm và hạn chế của từng thuật toán tìm kiếm trong môi trường dữ liệu thực tế.
+
+\newpage
+\tableofcontents
+\newpage
+\listoftables
+\newpage
+\listoffigures
+\newpage
+
+\pagenumbering{arabic}
+
+\section{Giới thiệu}
+
+Tìm đường trên bản đồ là một bài toán cơ bản trong trí tuệ nhân tạo và khoa học máy tính. Bài toán này thường được mô hình hóa dưới dạng đồ thị, trong đó các đỉnh biểu diễn vị trí hoặc điểm giao nhau, còn các cạnh biểu diễn tuyến đường nối giữa các vị trí. Mỗi cạnh có thể mang một trọng số như khoảng cách, thời gian di chuyển hoặc chi phí sử dụng.
+
+Trong đề tài này, bài toán được triển khai trên mạng lưới đường sắt, tàu điện hoặc tram tại khu vực trung tâm Saint Petersburg, Nga. Người dùng có thể chọn điểm đi, điểm đến và vật cản trực tiếp trên bản đồ. Chương trình sau đó tự động tìm các ga phù hợp, chạy thuật toán tìm kiếm trên graph và hiển thị tuyến đường gồm các đoạn đi bộ và đoạn đi tàu.
+
+Mục tiêu của đề tài gồm:
+\begin{itemize}
+    \item Xây dựng giao diện bản đồ tương tác bằng Python.
+    \item Tải và xử lý dữ liệu giao thông thực tế từ OpenStreetMap.
+    \item Cài đặt và so sánh nhiều thuật toán tìm kiếm đường đi.
+    \item Xử lý các vấn đề thực tế như graph rời rạc, dữ liệu thiếu, vật cản và nguy cơ treo giao diện.
+\end{itemize}
+
+\section{Cơ sở lý thuyết}
+
+\subsection{Mô hình đồ thị}
+
+Mạng lưới giao thông được biểu diễn dưới dạng đồ thị $G=(V,E)$, trong đó $V$ là tập các node và $E$ là tập các cạnh. Mỗi node có tọa độ địa lý gồm vĩ độ và kinh độ. Mỗi cạnh có trọng số là độ dài đoạn đường, thường được tính theo mét.
+
+Trong ứng dụng, dữ liệu graph được lấy từ OpenStreetMap thông qua thư viện \texttt{osmnx}. Các node gần nhà ga được gắn nhãn \texttt{is\_station} để phục vụ việc chọn ga bắt đầu và ga kết thúc.
+
+\subsection{Khoảng cách Haversine}
+
+Do tọa độ trên bản đồ là tọa độ địa lý, khoảng cách giữa hai điểm được tính bằng công thức Haversine:
+
+\[
+d = 2R \cdot \arctan2(\sqrt{a}, \sqrt{1-a})
+\]
+
+trong đó:
+
+\[
+a = \sin^2\left(\frac{\Delta \varphi}{2}\right)
+    + \cos(\varphi_1)\cos(\varphi_2)\sin^2\left(\frac{\Delta \lambda}{2}\right)
+\]
+
+Với $R$ là bán kính Trái Đất, $\varphi$ là vĩ độ và $\lambda$ là kinh độ.
+
+\subsection{Thuật toán A*}
+
+A* là thuật toán tìm đường có sử dụng cả chi phí thực tế đã đi và hàm heuristic ước lượng khoảng cách còn lại. Giá trị ưu tiên của mỗi node được tính theo công thức:
+
+\[
+f(n) = g(n) + h(n)
+\]
+
+Trong đó $g(n)$ là chi phí từ điểm bắt đầu đến node hiện tại, còn $h(n)$ là ước lượng chi phí từ node hiện tại đến đích. Trong đề tài này, $h(n)$ được tính bằng khoảng cách Haversine giữa node hiện tại và node đích.
+
+\subsection{Các thuật toán khác}
+
+Ngoài A*, ứng dụng còn cài đặt các thuật toán Greedy, UCS, BFS, DFS và IDS. Mỗi thuật toán có đặc điểm riêng, được tóm tắt trong Bảng~\ref{tab:algorithms}.
+
+\begin{table}[h]
+\centering
+\caption{So sánh các thuật toán tìm kiếm trong ứng dụng}
+\label{tab:algorithms}
+\begin{tabular}{p{3cm}p{4cm}p{6cm}}
+\toprule
+\textbf{Thuật toán} & \textbf{Tiêu chí ưu tiên} & \textbf{Nhận xét} \\
+\midrule
+A* & $g(n)+h(n)$ & Phù hợp cho tìm đường thực tế, cân bằng giữa chi phí đã đi và khoảng cách còn lại. \\
+UCS & $g(n)$ & Tìm đường có chi phí thấp nhưng thường duyệt nhiều node hơn A*. \\
+Greedy & $h(n)$ & Chạy nhanh trong một số trường hợp nhưng dễ chọn đường không tối ưu. \\
+BFS & Số cạnh & Không tối ưu theo khoảng cách thực tế, chỉ phù hợp để minh họa duyệt theo tầng. \\
+DFS & Độ sâu & Dễ đi lệch hướng, không phù hợp cho tìm đường ngắn nhất. \\
+IDS & Độ sâu tăng dần & Kết hợp ý tưởng DFS và BFS nhưng có thể chậm với graph lớn. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Phân tích và thiết kế hệ thống}
+
+\subsection{Kiến trúc tổng quan}
+
+Ứng dụng được chia thành bốn phần chính:
+
+\begin{itemize}
+    \item Cấu hình và các hàm toán học.
+    \item Lớp \texttt{PathFinder} chứa các thuật toán tìm kiếm.
+    \item Chỉ mục không gian \texttt{SpatialIndex} để tìm nhanh ga hoặc node railway gần điểm người dùng chọn.
+    \item Hàm xử lý route đa phương thức, kết hợp đoạn nối thẳng và tuyến tàu.
+    \item Giao diện người dùng bằng \texttt{customtkinter} và \texttt{tkintermapview}.
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{
+\centering
+Người dùng chọn điểm đi/đến trên bản đồ\\
+$\downarrow$\\
+Tìm ga ứng viên gần điểm đi và điểm đến\\
+$\downarrow$\\
+Chạy thuật toán tìm kiếm trên graph đường ray\\
+$\downarrow$\\
+Cắt tuyến tại node gần đích nhất và vẽ kết quả
+}}
+\caption{Luồng xử lý chính của ứng dụng}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{Cấu hình hệ thống}
+
+Các tham số quan trọng của ứng dụng được đặt trong lớp \texttt{Config}. Bảng~\ref{tab:config} mô tả ý nghĩa của một số tham số chính.
+
+\begin{table}[h]
+\centering
+\caption{Một số tham số cấu hình quan trọng}
+\label{tab:config}
+\begin{tabular}{p{4cm}p{3cm}p{6cm}}
+\toprule
+\textbf{Tham số} & \textbf{Giá trị} & \textbf{Ý nghĩa} \\
+\midrule
+\texttt{CENTER\_LAT}, \texttt{CENTER\_LON} & 59.9311, 30.3609 & Tâm bản đồ tại Saint Petersburg. \\
+\texttt{WALK\_SPEED} & 1.4 & Tốc độ đi bộ giả định, tính theo mét/giây. \\
+\texttt{TRAIN\_SPEED} & 20.0 & Tốc độ tàu giả định, tính theo mét/giây. \\
+\texttt{WAITING\_PENALTY\_SEC} & 120.0 & Thời gian chờ tàu giả định, tính theo giây. \\
+\texttt{WALK\_SAVING\_RATIO} & 1.2 & Chỉ chọn tuyến tàu khi nhanh hơn đi bộ trực tiếp ít nhất khoảng 20\%. \\
+\texttt{MAX\_NODES\_SEARCH} & 60000 & Giới hạn số node thuật toán được duyệt. \\
+\texttt{SEARCH\_TIMEOUT\_SECONDS} & 8.0 & Giới hạn thời gian tìm kiếm để tránh treo giao diện. \\
+\texttt{MAX\_STATION\_CANDIDATES} & 8 & Số ga ứng viên được xét quanh điểm đi hoặc điểm đến. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Xử lý dữ liệu bản đồ}
+
+Ứng dụng sử dụng \texttt{osmnx.graph\_from\_point} để tải graph đường ray trong bán kính 6000 mét quanh tâm bản đồ. Bộ lọc OpenStreetMap được dùng là:
+
+\begin{lstlisting}[style=pythonstyle]
+custom_filter='["railway"~"rail|subway|tram"]'
+\end{lstlisting}
+
+Sau khi tải graph, chương trình tiếp tục lấy danh sách station, tram stop và subway entrance. Các điểm này được ánh xạ về node gần nhất trên graph bằng \texttt{ox.distance.nearest\_nodes}. Những node đó được đánh dấu là ga hợp lệ.
+
+Do chương trình sử dụng tham số \texttt{custom\_filter}, môi trường cài đặt nên dùng \texttt{osmnx<2.0} để đảm bảo tương thích.
+
+\subsection{Chỉ mục không gian}
+
+Để tránh phải duyệt toàn bộ graph mỗi khi tìm ga gần điểm đi hoặc điểm đến, chương trình xây dựng một chỉ mục không gian dạng lưới ô vuông. Mỗi node được đưa vào một ô theo tọa độ vĩ độ và kinh độ. Khi cần tìm node trong bán kính $R$, chương trình chỉ duyệt các ô lân cận thay vì toàn bộ danh sách node. Cách này giúp giảm thời gian chọn ứng viên, đặc biệt khi graph có nhiều node railway.
+
+\subsection{Xử lý vật cản}
+
+Khi người dùng đặt vật cản, chương trình tìm node gần vị trí click nhất và thêm node đó vào tập \texttt{obstacles}. Khi tạo lại đối tượng \texttt{PathFinder}, các node vật cản và cạnh liên quan được loại bỏ khỏi danh sách kề, từ đó thuật toán sẽ tránh đi qua vùng bị chặn.
+
+\section{Cài đặt thuật toán}
+
+\subsection{Cài đặt A*}
+
+Trong phiên bản đã sửa, A* sử dụng hàng đợi ưu tiên theo bộ \texttt{(f, counter, node)}. Giá trị $g$ không được dùng để sắp thứ tự phụ trong heap mà được đọc từ \texttt{cost\_so\_far}. Cách làm này giúp hàng đợi ưu tiên rõ ràng hơn: node luôn được chọn theo $f=g+h$, còn \texttt{counter} chỉ dùng để phá hòa khi hai node có cùng $f$.
+
+\begin{lstlisting}[style=pythonstyle, caption={Phần cốt lõi của thuật toán A*}]
+def astar(self, start, goal, deadline=None):
+    counter = itertools.count()
+    pq = [(self.heuristic(start, goal), next(counter), start)]
+    came_from = {}
+    cost_so_far = {start: 0.0}
+    nodes_searched = 0
+
+    while pq:
+        _, _, current = heapq.heappop(pq)
+        current_g = cost_so_far.get(current, float("inf"))
+
+        nodes_searched += 1
+        if nodes_searched > Config.MAX_NODES_SEARCH or self._timed_out(deadline):
+            return nodes_searched, None
+
+        if current == goal:
+            return nodes_searched, self.reconstruct_path_simple(came_from, current)
+
+        for neighbor, cost, line in self.adj[current]:
+            new_cost = current_g + cost
+            if new_cost < cost_so_far.get(neighbor, float("inf")):
+                cost_so_far[neighbor] = new_cost
+                came_from[neighbor] = (current, line)
+                f_score = new_cost + self.heuristic(neighbor, goal)
+                heapq.heappush(pq, (f_score, next(counter), neighbor))
+\end{lstlisting}
+
+\subsection{Cắt tuyến gần điểm đến}
+
+Một vấn đề thực tế là ga được chọn làm đích có thể không phải ga gần nhất trên bản đồ do dữ liệu OSM không đồng nhất. Vì vậy, sau khi tìm được đường tàu, chương trình duyệt lại các node trên tuyến và cắt tuyến tại node gần điểm đến nhất. Cách xử lý này giúp tránh trường hợp tàu đi lố qua điểm đến rồi dừng ở ga xa.
+
+\subsection{Chống treo giao diện}
+
+Giao diện Tkinter chạy trên main thread, vì vậy nếu thuật toán tìm kiếm chạy trực tiếp trên main thread thì cửa sổ sẽ bị đứng. Ứng dụng giải quyết bằng cách chạy tìm đường trong thread nền:
+
+\begin{lstlisting}[style=pythonstyle]
+threading.Thread(target=self._search_worker, daemon=True).start()
+\end{lstlisting}
+
+Ngoài ra, mỗi thuật toán đều kiểm tra số node đã duyệt và thời gian deadline. Nếu vượt giới hạn, thuật toán trả về kết quả thất bại thay vì chạy vô hạn.
+
+\section{Kết quả và đánh giá}
+
+\subsection{Kết quả chức năng}
+
+Ứng dụng đã thực hiện được các chức năng chính:
+
+\begin{itemize}
+    \item Hiển thị bản đồ tương tác tại khu vực Saint Petersburg.
+    \item Cho phép chọn điểm đi, điểm đến và vật cản bằng menu chuột phải.
+    \item Hiển thị danh sách ga thực tế trên bản đồ.
+    \item Tìm đường bằng nhiều thuật toán khác nhau.
+    \item Vẽ tuyến đi bộ và tuyến tàu bằng màu khác nhau.
+    \item Hiển thị thời gian, quãng đường và số node đã duyệt.
+\end{itemize}
+
+\subsection{Đánh giá thuật toán}
+
+Với dữ liệu graph thực tế, A* và UCS cho kết quả hợp lý hơn vì có xét trọng số cạnh. A* thường duyệt ít node hơn UCS nhờ sử dụng heuristic Haversine. Greedy có thể nhanh nhưng dễ chọn tuyến sai vì chỉ nhìn khoảng cách tới đích mà bỏ qua chi phí đã đi. BFS, DFS và IDS không phù hợp để chọn tuyến giao thông tối ưu, nhưng vẫn hữu ích trong việc minh họa cách hoạt động của các chiến lược tìm kiếm cơ bản.
+
+\begin{table}[h]
+\centering
+\caption{Đánh giá định tính các thuật toán trong ứng dụng}
+\label{tab:evaluation}
+\begin{tabular}{p{3cm}p{3cm}p{6cm}}
+\toprule
+\textbf{Thuật toán} & \textbf{Mức phù hợp} & \textbf{Lý do} \\
+\midrule
+A* & Cao & Có trọng số, có heuristic, phù hợp với bản đồ địa lý. \\
+UCS & Cao & Tối ưu theo chi phí nhưng có thể chậm hơn A*. \\
+Greedy & Trung bình & Nhanh nhưng không đảm bảo tối ưu. \\
+BFS & Thấp & Chỉ tối ưu số cạnh, không tối ưu quãng đường. \\
+DFS & Thấp & Phụ thuộc thứ tự duyệt, dễ đi xa khỏi đích. \\
+IDS & Thấp đến trung bình & Có giới hạn độ sâu nhưng tốn nhiều lần duyệt lại. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Hạn chế}
+
+Ứng dụng vẫn còn một số hạn chế:
+
+\begin{itemize}
+    \item Chưa có dữ liệu lịch trình tàu thật nên thời gian di chuyển chỉ là ước lượng.
+    \item Đoạn đi bộ hiện được vẽ bằng đường thẳng thay vì theo mạng lưới đường bộ.
+    \item Chất lượng route phụ thuộc nhiều vào dữ liệu OpenStreetMap.
+    \item Một số thuật toán như BFS, DFS và IDS không phù hợp cho bài toán tối ưu quãng đường thực tế.
+\end{itemize}
+
+\section{Kết luận và hướng phát triển}
+
+\subsection{Kết luận}
+
+Đề tài đã xây dựng được ứng dụng tìm đường đa phương thức bằng Python, có khả năng tải dữ liệu bản đồ thực tế, chọn điểm trên bản đồ, chạy các thuật toán tìm kiếm và hiển thị kết quả trực quan. Thông qua quá trình triển khai, có thể thấy A* là thuật toán phù hợp nhất cho bài toán tìm đường trên bản đồ vì cân bằng giữa độ chính xác và hiệu năng.
+
+Bên cạnh đó, đề tài cũng cho thấy khi làm việc với dữ liệu thực tế, việc xử lý lỗi và dữ liệu thiếu quan trọng không kém bản thân thuật toán. Các cơ chế như timeout, giới hạn số node, cắt tuyến gần điểm đến và chạy thuật toán trong thread nền giúp ứng dụng ổn định hơn khi sử dụng.
+
+\subsection{Hướng phát triển}
+
+Trong tương lai, ứng dụng có thể được mở rộng theo các hướng sau:
+
+\begin{itemize}
+    \item Bổ sung mạng lưới đường bộ để đoạn đi bộ được tính theo đường thật.
+    \item Tích hợp dữ liệu lịch trình tàu để tính thời gian chính xác hơn.
+    \item Thêm chức năng so sánh trực quan số node đã duyệt của từng thuật toán.
+    \item Lưu lịch sử tìm kiếm và xuất kết quả ra file.
+    \item Bổ sung giao diện chọn thành phố hoặc bán kính tải bản đồ.
+\end{itemize}
+
+\newpage
+\section*{Tài liệu tham khảo}
+\addcontentsline{toc}{section}{Tài liệu tham khảo}
+
+\begin{enumerate}
+    \item S. Russell and P. Norvig, \textit{Artificial Intelligence: A Modern Approach}, Pearson.
+    \item OpenStreetMap Wiki, ``Map Features: Railway.'' Available: \url{https://wiki.openstreetmap.org/wiki/Map_features}
+    \item OSMnx Documentation. Available: \url{https://osmnx.readthedocs.io/}
+    \item NetworkX Documentation. Available: \url{https://networkx.org/documentation/stable/}
+    \item TkinterMapView project. Available: \url{https://github.com/TomSchimansky/TkinterMapView}
+\end{enumerate}
+
+\newpage
+\appendix
+
+\section{Mã nguồn cấu hình chính}
+
+\begin{lstlisting}[style=pythonstyle, caption={Cấu hình chính của chương trình}]
+class Config:
+    CITY = "Sankt-Peterburg, Russia"
+    CENTER_LAT = 59.9311
+    CENTER_LON = 30.3609
+
+    WALK_SPEED = 1.4
+    TRAIN_SPEED = 20.0
+    WAITING_PENALTY_SEC = 120.0
+
+    MAX_NODES_SEARCH = 60000
+    SEARCH_TIMEOUT_SECONDS = 8.0
+    MAX_STATION_CANDIDATES = 8
+    WALK_SAVING_RATIO = 1.2
+\end{lstlisting}
+
+\section{Mã nguồn hàm khoảng cách Haversine}
+
+\begin{lstlisting}[style=pythonstyle, caption={Tính khoảng cách giữa hai tọa độ địa lý}]
+def fast_haversine(lat1, lon1, lat2, lon2):
+    R = 6371000
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+    a = (
+        math.sin(dphi / 2) ** 2
+        + math.cos(phi1) * math.cos(phi2)
+        * math.sin(dlambda / 2) ** 2
+    )
+    return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+\end{lstlisting}
+
+\section{Mã nguồn thuật toán A*}
+
+\begin{lstlisting}[style=pythonstyle, caption={Cài đặt thuật toán A*}]
+def astar(self, start, goal, deadline=None):
+    counter = itertools.count()
+    pq = [(self.heuristic(start, goal), next(counter), start)]
+    came_from = {}
+    cost_so_far = {start: 0.0}
+    nodes_searched = 0
+
+    while pq:
+        _, _, current = heapq.heappop(pq)
+        current_g = cost_so_far.get(current, float("inf"))
+
+        nodes_searched += 1
+        if nodes_searched > Config.MAX_NODES_SEARCH:
+            return nodes_searched, None
+
+        if current == goal:
+            return nodes_searched, self.reconstruct_path_simple(came_from, current)
+
+        for neighbor, cost, line in self.adj[current]:
+            new_cost = current_g + cost
+            if new_cost < cost_so_far.get(neighbor, float("inf")):
+                cost_so_far[neighbor] = new_cost
+                came_from[neighbor] = (current, line)
+                f_score = new_cost + self.heuristic(neighbor, goal)
+                heapq.heappush(pq, (f_score, next(counter), neighbor))
+
+    return nodes_searched, None
+\end{lstlisting}
+
+\section{Mã nguồn chọn cặp ga ứng viên}
+
+\begin{lstlisting}[style=pythonstyle, caption={Ưu tiên cặp ga có tổng khoảng cách đi bộ ngắn}]
+candidate_pairs = []
+for d_walk_a, s_station in start_candidates:
+    for d_walk_b, g_station in goal_candidates:
+        if s_station != g_station and finder.same_component(s_station, g_station):
+            candidate_pairs.append(
+                (d_walk_a + d_walk_b, d_walk_a, s_station, d_walk_b, g_station)
+            )
+
+candidate_pairs.sort(key=lambda item: item[0])
+
+for _, d_walk_a, s_station, d_walk_b, g_station in candidate_pairs:
+    if time.monotonic() >= deadline:
+        break
+    nodes, train_path = run_algo(s_station, g_station, deadline=deadline)
+\end{lstlisting}
+
+\section{Mã nguồn chạy tìm kiếm trên luồng nền}
+
+\begin{lstlisting}[style=pythonstyle, caption={Tách tác vụ tìm đường khỏi main thread}]
+def run_search(self):
+    if not self.start_coords or not self.goal_coords:
+        self.update_log("Please select start and goal first.")
+        return
+
+    start = self.start_coords
+    goal = self.goal_coords
+    self.search_btn.configure(state="disabled", text="Searching...")
+    threading.Thread(
+        target=self._search_worker,
+        args=(start, goal),
+        daemon=True
+    ).start()
+\end{lstlisting}
+
+\end{document}
