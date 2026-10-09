@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pitch Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">⚽ Pitch Manager</div>
+        <nav>
+          <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+          <a href="{{ url_for('pitches') }}" class="nav-link">Sân bóng</a>
+          <a href="{{ url_for('bookings') }}" class="nav-link">Đặt sân</a>
+          <a href="{{ url_for('customers') }}" class="nav-link">Khách hàng</a>
+          <a href="{{ url_for('reports') }}" class="nav-link">Báo cáo</a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-list">
+              {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </body>
+</html>

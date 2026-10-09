@@ -4,6 +4,28 @@ A Python desktop application for multimodal route finding in Saint Petersburg us
 
 The app was built as an academic/personal project to explore how graph search algorithms behave on real urban transport data.
 
+## Football Pitch Manager (Flask + SQLite)
+
+This repository also includes a standalone Vietnamese football-pitch management web app in `football_pitch_manager/`. It provides a dashboard, pitch and customer management, booking history, overlap prevention, and revenue reports. The original Tkinter rail path finder remains unchanged.
+
+Run it from the repository root:
+
+```powershell
+Set-Location football_pitch_manager
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+python app.py
+```
+
+Open http://127.0.0.1:5000. Run its tests from `football_pitch_manager/` with:
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+See [`football_pitch_manager/README.md`](football_pitch_manager/README.md) for details.
+
 ## Screenshot
 
 ![Saint Petersburg Rail Path Finder demo](assets/demo.png)

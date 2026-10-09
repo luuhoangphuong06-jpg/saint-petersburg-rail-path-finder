@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h1>Dashboard</h1>
+</div>
+
+<div class="stats-grid">
+  <div class="card stat-card">
+    <div class="stat-label">Tổng sân</div>
+    <div class="stat-value">{{ stats.total_pitches }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-label">Sân khả dụng</div>
+    <div class="stat-value">{{ stats.available_pitches }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-label">Doanh thu hôm nay</div>
+    <div class="stat-value">{{ "{:,.0f}".format(stats.revenue_today) }}đ</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-label">Lịch đặt hôm nay</div>
+    <div class="stat-value">{{ stats.bookings_today }}</div>
+  </div>
+</div>
+
+<div class="row-grid">
+  <section class="card">
+    <h2>Đặt sân gần đây</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Khách hàng</th>
+          <th>Sân</th>
+          <th>Ngày</th>
+          <th>Giờ</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for booking in recent_bookings %}
+        <tr>
+          <td>{{ booking.customer_name }}</td>
+          <td>{{ booking.pitch_name }}</td>
+          <td>{{ booking.booking_date }}</td>
+          <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+          <td><span class="status status-{{ booking.status }}">{{ status_labels[booking.status] }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5">Chưa có lịch đặt.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Thông tin</h2>
+    <ul class="info-list">
+      <li>Đơn chờ duyệt: <strong>{{ stats.pending_bookings }}</strong></li>
+      <li>Hệ thống đang hỗ trợ quản lý đặt sân nhanh chóng.</li>
+      <li>Khách hàng có thể cập nhật trạng thái đặt theo từng buổi.</li>
+    </ul>
+  </section>
+</div>
+{% endblock %}
