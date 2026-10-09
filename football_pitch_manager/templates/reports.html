@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h1>Báo cáo doanh thu</h1>
+</div>
+
+<div class="stats-grid single-wide">
+  <div class="card stat-card">
+    <div class="stat-label">Tổng doanh thu</div>
+    <div class="stat-value">{{ "{:,.0f}".format(total_revenue) }}đ</div>
+  </div>
+</div>
+
+<div class="row-grid">
+  <section class="card">
+    <h2>Doanh thu theo sân</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Sân</th>
+          <th>Doanh thu</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in reports.by_pitch %}
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ "{:,.0f}".format(item.revenue) }}đ</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="2">Chưa có dữ liệu doanh thu.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Doanh thu theo ngày</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Ngày</th>
+          <th>Doanh thu</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in reports.by_date %}
+        <tr>
+          <td>{{ item.booking_date }}</td>
+          <td>{{ "{:,.0f}".format(item.revenue) }}đ</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="2">Chưa có dữ liệu.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

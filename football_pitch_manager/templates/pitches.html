@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h1>Quản lý sân bóng</h1>
+</div>
+
+<div class="form-card card">
+  <h2>Thêm sân mới</h2>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="form-grid">
+      <div>
+        <label>Tên sân</label>
+        <input type="text" name="name" required />
+      </div>
+      <div>
+        <label>Loại sân</label>
+        <input type="text" name="pitch_type" required />
+      </div>
+      <div>
+        <label>Giá/giờ</label>
+        <input type="number" name="hourly_rate" min="0" step="1000" required />
+      </div>
+      <div class="checkbox-wrap">
+        <label><input type="checkbox" name="is_available" checked /> Sẵn sàng</label>
+      </div>
+    </div>
+    <button type="submit" class="primary-btn">Lưu sân</button>
+  </form>
+</div>
+
+<section class="card table-card">
+  <h2>Danh sách sân</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tên sân</th>
+        <th>Loại sân</th>
+        <th>Giá/giờ</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pitch in pitches %}
+      <tr>
+        <td>{{ pitch.id }}</td>
+        <td>{{ pitch.name }}</td>
+        <td>{{ pitch.pitch_type }}</td>
+        <td>{{ "{:,.0f}".format(pitch.hourly_rate) }}đ</td>
+        <td>
+          {% if pitch.is_available %}
+            <span class="status status-confirmed">Hoạt động</span>
+          {% else %}
+            <span class="status status-cancelled">Bảo trì</span>
+          {% endif %}
+        </td>
+        <td>
+          <form method="post" action="{{ url_for('toggle_pitch', pitch_id=pitch.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button type="submit" class="secondary-btn">
+              {% if pitch.is_available %}Tắt{% else %}Bật{% endif %}
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6">Chưa có sân nào.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

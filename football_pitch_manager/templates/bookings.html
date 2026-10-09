@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h1>Đặt sân</h1>
+</div>
+
+<div class="form-card card">
+  <h2>Tạo lịch đặt mới</h2>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="form-grid">
+      <div>
+        <label>Khách hàng</label>
+        <input type="text" name="customer_name" required />
+      </div>
+      <div>
+        <label>Số điện thoại</label>
+        <input type="tel" name="phone" required />
+      </div>
+      <div>
+        <label>Email</label>
+        <input type="email" name="email" />
+      </div>
+      <div>
+        <label>Sân</label>
+        <select name="pitch_id" required>
+          {% for pitch in pitches %}
+          <option value="{{ pitch.id }}">{{ pitch.name }} - {{ pitch.pitch_type }}</option>
+          {% else %}
+          <option value="" disabled selected>Không có sân đang hoạt động</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Ngày đặt</label>
+        <input type="date" name="booking_date" value="{{ today }}" required />
+      </div>
+      <div>
+        <label>Giờ bắt đầu</label>
+        <input type="time" name="start_time" required />
+      </div>
+      <div>
+        <label>Giờ kết thúc</label>
+        <input type="time" name="end_time" required />
+      </div>
+      <div>
+        <label>Trạng thái</label>
+        <select name="status">
+          <option value="pending">Chờ xác nhận</option>
+          <option value="confirmed">Đã xác nhận</option>
+          <option value="completed">Hoàn tất</option>
+          <option value="cancelled">Đã hủy</option>
+        </select>
+      </div>
+    </div>
+    <div class="notes-wrap">
+      <label>Ghi chú</label>
+      <textarea name="notes" rows="3"></textarea>
+    </div>
+    <button type="submit" class="primary-btn" {% if not pitches %}disabled{% endif %}>Đặt sân</button>
+  </form>
+</div>
+
+<section class="card table-card">
+  <h2>Danh sách lịch đặt</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Khách hàng</th>
+        <th>Sân</th>
+        <th>Ngày</th>
+        <th>Giờ</th>
+        <th>Thành tiền</th>
+        <th>Trạng thái</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in bookings %}
+      <tr>
+        <td>{{ booking.customer_name }}</td>
+        <td>{{ booking.pitch_name }}</td>
+        <td>{{ booking.booking_date }}</td>
+        <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+        <td>{{ "{:,.0f}".format(booking.total_price) }}đ</td>
+        <td>
+          <span class="status status-{{ booking.status }}">{{ status_labels[booking.status] }}</span>
+        </td>
+        <td>
+          <form method="post" action="{{ url_for('booking_status', booking_id=booking.id) }}" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <select name="status">
+              {% for status, label in status_labels.items() %}
+              <option value="{{ status }}" {% if booking.status == status %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="secondary-btn">Cập nhật</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7">Chưa có lịch đặt nào.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

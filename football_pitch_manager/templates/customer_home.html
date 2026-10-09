@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block title %}Đặt sân trực tuyến{% endblock %}
+{% block content %}
+<div class="customer-shell">
+  {% include 'customer_nav.html' %}
+
+  <section class="customer-hero">
+    <div>
+      <span class="eyebrow">ĐẶT SÂN NHANH CHÓNG</span>
+      <h1>Đặt sân dễ dàng,<br><span>chơi bóng hết mình.</span></h1>
+      <p>Chọn thời gian phù hợp, gửi yêu cầu đặt sân và theo dõi xác nhận ngay trên hệ thống.</p>
+    </div>
+    <div class="hero-ball" aria-hidden="true">⚽</div>
+  </section>
+
+  <section class="customer-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">BƯỚC 1</span>
+        <h2>Kiểm tra sân trống</h2>
+      </div>
+      <span class="muted-text">Chọn ngày và khung giờ bạn muốn chơi</span>
+    </div>
+    <form class="availability-form card" method="get" action="{{ url_for('customer_home') }}" data-loading-form>
+      <div class="customer-form-grid">
+        <div>
+          <label for="filter-date">Ngày chơi</label>
+          <input id="filter-date" type="date" name="date" value="{{ booking_date }}" required />
+        </div>
+        <div>
+          <label for="filter-start">Bắt đầu</label>
+          <input id="filter-start" type="time" name="start_time" value="{{ start_time }}" />
+        </div>
+        <div>
+          <label for="filter-end">Kết thúc</label>
+          <input id="filter-end" type="time" name="end_time" value="{{ end_time }}" />
+        </div>
+        <button class="primary-btn customer-action" type="submit">Kiểm tra sân</button>
+      </div>
+      <p class="loading-message" data-loading-message hidden>Đang kiểm tra lịch sân...</p>
+      {% if availability_error %}
+      <p class="inline-error" role="alert">{{ availability_error }}</p>
+      {% endif %}
+    </form>
+  </section>
+
+  <section class="customer-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">DANH SÁCH SÂN</span>
+        <h2>Sân bóng của chúng tôi</h2>
+      </div>
+      {% if start_time and end_time %}
+      <span class="availability-summary">Kết quả cho {{ start_time }} - {{ end_time }}</span>
+      {% endif %}
+    </div>
+    <div class="pitch-cards">
+      {% for option in pitch_options %}
+      <article class="pitch-card {% if option.available is sameas false or not option.pitch.is_available %}pitch-unavailable{% endif %}">
+        <div class="pitch-card-top">
+          <div class="pitch-icon">⚽</div>
+          {% if not option.pitch.is_available %}
+          <span class="status status-cancelled">Bảo trì</span>
+          {% elif option.available is sameas false %}
+          <span class="status status-pending">Đã kín giờ</span>
+          {% else %}
+          <span class="status status-confirmed">Sẵn sàng</span>
+          {% endif %}
+        </div>
+        <h3>{{ option.pitch.name }}</h3>
+        <p class="pitch-type">{{ option.pitch.pitch_type }} · Sân tiêu chuẩn</p>
+        <strong class="pitch-price">{{ "{:,.0f}".format(option.pitch.hourly_rate) }}đ <small>/ giờ</small></strong>
+      </article>
+      {% else %}
+      <div class="empty-state card">
+        <div class="empty-icon">⌁</div>
+        <h3>Chưa có sân nào</h3>
+        <p>Vui lòng quay lại sau hoặc liên hệ trực tiếp với sân.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="customer-section booking-panel">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">BƯỚC 2</span>
+        <h2>Gửi yêu cầu đặt sân</h2>
+      </div>
+      <span class="muted-text">Yêu cầu sẽ ở trạng thái chờ xác nhận</span>
+    </div>
+    {% if current_customer %}
+    <form class="card customer-booking-form" method="post" action="{{ url_for('customer_create_booking') }}" data-loading-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <div class="customer-identity">
+        <div class="pitch-icon">✓</div>
+        <div>
+          <strong>{{ current_customer.name }}</strong>
+          <span>{{ current_customer.phone }} · {{ current_customer.email or 'Không có email' }}</span>
+        </div>
+        <span class="identity-note">Tài khoản của bạn</span>
+      </div>
+      <div class="customer-form-grid">
+        <div>
+          <label for="booking-pitch">Chọn sân</label>
+          <select id="booking-pitch" name="pitch_id" required>
+            <option value="">-- Chọn sân còn trống --</option>
+            {% for option in pitch_options %}
+            {% if option.pitch.is_available and (option.available is not sameas false) %}
+            <option value="{{ option.pitch.id }}">{{ option.pitch.name }} - {{ option.pitch.pitch_type }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="booking-date">Ngày chơi</label>
+          <input id="booking-date" name="booking_date" type="date" value="{{ booking_date }}" required />
+        </div>
+        <div>
+          <label for="booking-start">Giờ bắt đầu</label>
+          <input id="booking-start" name="start_time" type="time" value="{{ start_time }}" required />
+        </div>
+        <div>
+          <label for="booking-end">Giờ kết thúc</label>
+          <input id="booking-end" name="end_time" type="time" value="{{ end_time }}" required />
+        </div>
+      </div>
+      <div class="notes-wrap">
+        <label for="booking-notes">Ghi chú <span>(không bắt buộc)</span></label>
+        <textarea id="booking-notes" name="notes" rows="3" placeholder="Ví dụ: Đội 7 người, cần chuẩn bị bóng..."></textarea>
+      </div>
+      <div class="booking-form-footer">
+        <p class="form-hint">Bạn sẽ nhận mã booking để tra cứu trạng thái sau khi gửi.</p>
+        <button class="primary-btn customer-action" type="submit" {% if not pitch_options %}disabled{% endif %}>Gửi yêu cầu đặt sân</button>
+      </div>
+      <p class="loading-message" data-loading-message hidden>Đang gửi yêu cầu...</p>
+    </form>
+    {% else %}
+    <div class="card customer-login-prompt">
+      <div class="help-icon">→</div>
+      <div>
+        <h3>Đăng nhập để đặt sân</h3>
+        <p>Bạn cần tài khoản khách hàng để gửi yêu cầu và theo dõi lịch đặt của mình.</p>
+      </div>
+      <a class="primary-btn" href="{{ url_for('customer_login', next=request.path) }}">Đăng nhập</a>
+      <a class="secondary-btn" href="{{ url_for('customer_register') }}">Đăng ký</a>
+    </div>
+    {% endif %}
+  </section>
+
+  <section class="customer-help card">
+    <div class="help-icon">?</div>
+    <div>
+      <h3>Cần hỗ trợ?</h3>
+      <p>Nếu cần đổi lịch hoặc có câu hỏi, hãy liên hệ với quản lý sân để được hỗ trợ nhanh nhất.</p>
+    </div>
+    <a class="secondary-btn" href="{{ url_for('customer_lookup') }}">Tra cứu booking</a>
+  </section>
+</div>
+<script>
+  document.querySelectorAll("[data-loading-form]").forEach(function (form) {
+    form.addEventListener("submit", function () {
+      var button = form.querySelector("button[type=submit]");
+      var message = form.querySelector("[data-loading-message]");
+      if (button) {
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.textContent = "Đang xử lý...";
+      }
+      if (message) message.hidden = false;
+    });
+  });
+</script>
+{% endblock %}

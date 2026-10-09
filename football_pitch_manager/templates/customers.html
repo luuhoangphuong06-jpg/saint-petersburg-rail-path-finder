@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h1>Khách hàng</h1>
+</div>
+
+<section class="form-card card">
+  <h2>Thêm hoặc cập nhật khách hàng</h2>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="form-grid">
+      <div>
+        <label for="customer-name">Tên khách hàng</label>
+        <input id="customer-name" type="text" name="name" required />
+      </div>
+      <div>
+        <label for="customer-phone">Số điện thoại</label>
+        <input id="customer-phone" type="tel" name="phone" required />
+      </div>
+      <div>
+        <label for="customer-email">Email</label>
+        <input id="customer-email" type="email" name="email" />
+      </div>
+    </div>
+    <button type="submit" class="primary-btn">Lưu khách hàng</button>
+  </form>
+</section>
+
+<section class="card table-card">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tên</th>
+        <th>Số điện thoại</th>
+        <th>Email</th>
+        <th>Số lần đặt</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for customer in customers %}
+      <tr>
+        <td>{{ customer.id }}</td>
+        <td>{{ customer.name }}</td>
+        <td>{{ customer.phone or '—' }}</td>
+        <td>{{ customer.email or '—' }}</td>
+        <td>{{ customer.booking_count }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5">Chưa có khách hàng nào.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
