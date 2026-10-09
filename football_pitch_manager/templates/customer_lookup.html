@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Tra cứu lịch đặt{% endblock %}
+{% block content %}
+<div class="customer-shell narrow-shell">
+  {% include 'customer_nav.html' %}
+  <section class="lookup-hero">
+    <span class="eyebrow">TRA CỨU LỊCH ĐẶT</span>
+    <h1>Theo dõi booking của bạn</h1>
+    <p>Danh sách dưới đây chỉ hiển thị các lịch đặt thuộc tài khoản của bạn.</p>
+  </section>
+  <form class="card lookup-form" method="get" action="{{ url_for('customer_lookup') }}">
+    <div class="customer-form-grid">
+      <div>
+        <label for="lookup-code">Mã booking <span>(không bắt buộc)</span></label>
+        <input id="lookup-code" name="booking_id" type="number" min="1" value="{{ booking_id }}" placeholder="Ví dụ: 12" />
+      </div>
+    </div>
+    <button class="primary-btn customer-action" type="submit">Tra cứu lịch</button>
+  </form>
+  {% if lookup_error %}
+  <div class="inline-error lookup-message" role="alert">{{ lookup_error }}</div>
+  {% endif %}
+  {% if bookings %}
+  <section class="lookup-results">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">KẾT QUẢ</span>
+        <h2>Lịch đặt của bạn</h2>
+      </div>
+      <span class="muted-text">{{ bookings|length }} lịch đặt gần nhất</span>
+    </div>
+    {% for booking in bookings %}
+    <article class="lookup-booking card">
+      <div>
+        <span class="booking-id">#{{ booking.id }}</span>
+        <h3>{{ booking.pitch_name }}</h3>
+        <p>{{ booking.booking_date }} · {{ booking.start_time }} - {{ booking.end_time }}</p>
+      </div>
+      <div class="lookup-booking-side">
+        <span class="status status-{{ booking.status }}">{{ status_labels[booking.status] }}</span>
+        <strong>{{ "{:,.0f}".format(booking.total_price) }}đ</strong>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+  {% elif not lookup_error %}
+  <div class="empty-state card">
+    <div class="empty-icon">⌕</div>
+    <h3>Chưa có dữ liệu tra cứu</h3>
+    <p>Nhập thông tin ở trên để xem lịch đặt của bạn.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Xác nhận đặt sân{% endblock %}
+{% block content %}
+<div class="customer-shell narrow-shell">
+  {% include 'customer_nav.html' %}
+  <section class="success-card card">
+    <div class="success-icon">✓</div>
+    <span class="eyebrow">ĐÃ GỬI YÊU CẦU</span>
+    <h1>Yêu cầu đặt sân thành công!</h1>
+    <p>Quản lý sân sẽ xác nhận lịch của bạn. Hãy lưu lại mã booking để tra cứu.</p>
+    <div class="booking-code">
+      <span>Mã booking</span>
+      <strong>#{{ booking.id }}</strong>
+    </div>
+    <div class="confirmation-details">
+      <div><span>Sân</span><strong>{{ booking.pitch_name }}</strong></div>
+      <div><span>Ngày</span><strong>{{ booking.booking_date }}</strong></div>
+      <div><span>Thời gian</span><strong>{{ booking.start_time }} - {{ booking.end_time }}</strong></div>
+      <div><span>Trạng thái</span><strong class="status status-{{ booking.status }}">{{ status_labels[booking.status] }}</strong></div>
+    </div>
+    <div class="confirmation-actions">
+      <a class="primary-btn" href="{{ url_for('customer_lookup', phone=booking.phone, booking_id=booking.id) }}">Xem trạng thái</a>
+      <a class="secondary-btn" href="{{ url_for('customer_home') }}">Đặt lịch khác</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

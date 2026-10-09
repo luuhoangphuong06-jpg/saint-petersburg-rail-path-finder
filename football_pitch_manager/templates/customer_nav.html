@@ -1,0 +1,19 @@
+<header class="customer-nav">
+  <a class="customer-brand" href="{{ url_for('customer_home') }}">
+    <span class="brand-mark">⚽</span>
+    <span>Pitch Manager</span>
+  </a>
+  <nav class="customer-links" aria-label="Điều hướng khách hàng">
+    <a href="{{ url_for('customer_home') }}">Đặt sân</a>
+    <a href="{{ url_for('customer_lookup') }}">Tra cứu lịch</a>
+    {% if current_customer %}
+    <form method="post" action="{{ url_for('customer_logout') }}" class="customer-logout-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <button type="submit">Đăng xuất</button>
+    </form>
+    {% else %}
+    <a href="{{ url_for('customer_login') }}">Đăng nhập</a>
+    <a class="customer-register-link" href="{{ url_for('customer_register') }}">Đăng ký</a>
+    {% endif %}
+  </nav>
+</header>

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Đăng ký khách hàng{% endblock %}
+{% block content %}
+<div class="customer-shell narrow-shell">
+  {% include 'customer_nav.html' %}
+  <section class="auth-card card">
+    <span class="eyebrow">TẠO TÀI KHOẢN</span>
+    <h1>Đăng ký khách hàng</h1>
+    <p class="muted-text">Tài khoản giúp bạn đặt sân nhanh hơn và xem đúng lịch của mình.</p>
+    <form method="post" class="auth-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <label for="customer-register-name">Họ và tên</label>
+      <input id="customer-register-name" name="name" type="text" autocomplete="name" required />
+      <label for="customer-register-phone">Số điện thoại</label>
+      <input id="customer-register-phone" name="phone" type="tel" autocomplete="tel" required />
+      <label for="customer-register-email">Email <span>(không bắt buộc)</span></label>
+      <input id="customer-register-email" name="email" type="email" autocomplete="email" />
+      <label for="customer-register-password">Mật khẩu</label>
+      <input id="customer-register-password" name="password" type="password" autocomplete="new-password" minlength="8" required />
+      <button class="primary-btn customer-action" type="submit">Tạo tài khoản</button>
+    </form>
+    <p class="auth-switch">Đã có tài khoản? <a href="{{ url_for('customer_login') }}">Đăng nhập</a></p>
+  </section>
+</div>
+{% endblock %}

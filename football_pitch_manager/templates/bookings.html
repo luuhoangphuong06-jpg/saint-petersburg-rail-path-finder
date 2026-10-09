@@ -7,6 +7,7 @@
 <div class="form-card card">
   <h2>Tạo lịch đặt mới</h2>
   <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="form-grid">
       <div>
         <label>Khách hàng</label>
@@ -87,6 +88,7 @@
         </td>
         <td>
           <form method="post" action="{{ url_for('booking_status', booking_id=booking.id) }}" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <select name="status">
               {% for status, label in status_labels.items() %}
               <option value="{{ status }}" {% if booking.status == status %}selected{% endif %}>{{ label }}</option>
